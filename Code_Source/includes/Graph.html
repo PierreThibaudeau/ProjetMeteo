@@ -1,0 +1,881 @@
+
+
+
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Highcharts Example</title>
+
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <style type="text/css">
+${demo.css}
+        </style>
+    
+
+    <?php   
+
+        $i=1;
+
+        $Somme_Cumul= $datetime1;                                       // Stockage de la date de début de l'interval dans "Somme_Cumul"
+        $Somme_Premier= 0;                                              
+        $Somme_Cumul_Date=0;                                            
+        $Somme_Cumul_TStamp=0;                                          
+
+        $Somme_Premier=strtotime($Somme_Cumul);                         // stockage du timestamp de Somme_Cumul dans Somme_Premier 
+        $Somme_Premier = round($Somme_Premier/60)*60;                   // Arrondi à la minute du Timestamp
+        $Tableau_Comparatif= array();                                   // Création d'un tableau
+        $Somme_Cumul_Date = date('Y-m-d H:i:s', $Somme_Premier);        // Création du string Somme_Cumul_Date, première date de l'intervalle
+        $Tableau_Comparatif[0]= '"'.$Somme_Cumul_Date.'"';              // inclusion dans le tableau de la première date
+        $Somme_Cumul_TStamp=strtotime($Somme_Cumul);                    // création de la variable qui va déterminer le timestamp de fin d'intervalle  
+
+        while ($i < $Limite_Valeurs)
+        {
+
+            
+             
+            $Somme_Cumul_TStamp = $Somme_Cumul_TStamp + $Timestamp_Frequence;       // ajout d'un timestamp de fréquence dans Somme_Cumul_TStamp à chaque passage de boucle
+            $Somme_Cumul_TStamp_round = round($Somme_Cumul_TStamp/60)*60;           // arrondi du timestamp à la minute
+            $Somme_Cumul_Date = date('Y-m-d H:i:s', $Somme_Cumul_TStamp_round);     // création d'une date grâce au timestamp
+            $Tableau_Comparatif[$i]= '"'.$Somme_Cumul_Date.'"';                     // inclusion de la date dans le tableau
+            $i++;
+        }
+
+        $Tab_Final = implode(',', $Tableau_Comparatif);        // fait en sorte que la variable Tab_Final soit syntaxé comme le SQL
+
+
+
+            ?><p><?php include('./includes/Connect.html'); ?></p><?php
+
+            // Compare le tableau Tab_Final à la table donnees_capteurs, les valeurs identiques dans le tableau sont retournées dans $reponse
+
+            if ($Timestamp_Frequence > 3600)   //si la frequence est supérieure à une minute
+            {
+            $reponse2 = $bdd_Read->prepare("SELECT * FROM calcul_tempo ");   //affiche des moyennes
+            $reponse  = $bdd_Read->prepare("SELECT * FROM donnees_capteurs WHERE DateTime IN ($Tab_Final) LIMIT $Limite_Valeurs "); //sens du vent
+            }
+            else   //sinon
+            {
+            $reponse2 = $bdd_Read->prepare("SELECT * FROM donnees_capteurs WHERE DateTime IN ($Tab_Final) LIMIT $Limite_Valeurs ");  //affiche toute les valeurs
+            $reponse  = $bdd_Read->prepare("SELECT * FROM donnees_capteurs WHERE DateTime IN ($Tab_Final) LIMIT $Limite_Valeurs "); 
+            }
+            
+            
+
+
+    ?>
+
+        <script type="text/javascript">
+
+// Data retrieved from http://vikjavev.no/ver/index.php?spenn=2d&sluttid=16.06.2015.
+$(function () {       
+    $('#Vent_Chart').highcharts({ //les quatre blocks fonctionnent de la même façon
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: "Mesures du " + document.getElementById('In_Date_Day').value + "/" + (document.getElementById('In_Date_Month').value) + "/" +document.getElementById('In_Date_Year').value + " jusqu'au " + document.getElementById('In_Date_Day_f').value + "/" +(document.getElementById('In_Date_Month_f').value) + "/" + document.getElementById('In_Date_Year_f').value   //utilisation des inputs secrets pour le titre du graphique
+        },
+        subtitle: {
+            text: ""
+
+        },
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        yAxis: [
+        {
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#2E2EFE'
+                }
+            },
+            title: {
+                text: "Vitesse du vent (km/h)",
+                style: {
+                    color: '#2E2EFE'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,  
+            plotBands: [{ // Light air
+                from: 0.0,
+                to: 1.0,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Calme',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            },
+             { // Light breeze
+                from: 1.0,
+                to: 6,
+                color: 'rgba(0, 0, 0, 0)',
+                label: {
+                    text: 'Très Légère Brise',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // Gentle breeze
+                from: 6.0,
+                to: 12,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Légère Brise',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // Moderate breeze
+                from: 12,
+                to: 20,
+                color: 'rgba(0, 0, 0, 0)',
+                label: {
+                    text: 'Petite Brise',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // Fresh breeze
+                from: 20,
+                to: 29,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Jolie Brise',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // Strong breeze
+                from: 29,
+                to: 39,
+                color: 'rgba(0, 0, 0, 0)',
+                label: {
+                    text: 'Bonne Brise',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // High wind
+                from: 39,
+                to: 50,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Vent Frais',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // High wind
+                from: 50,
+                to: 62,
+                color: 'rgba(0, 0, 0, 0)',
+                label: {
+                    text: 'Grand Frais',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+                }, { // High wind
+                from: 62,
+                to: 75,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Coup De Vent',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+                }, { // High wind
+                from: 75,
+                to: 89,
+                color: 'rgba(0, 0, 0, 0)',
+                label: {
+                    text: 'Fort Coup De Vent',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+                }, { // High wind
+                from: 89,
+                to: 103,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Tempête',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+                }, { // High wind
+                from: 103,
+                to: 118,
+                color: 'rgba(0, 0, 0, 0)',
+                label: {
+                    text: 'Violente Tempête',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+                }, { // High wind
+                from: 118,
+                to: 250,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: 'Ouragan',
+                    style: {
+                        color: '#606060'
+                    }
+                }    
+            }]
+        },
+        {
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#FACC2E'
+                }
+            },
+            title: {
+                text: "Sens du vent",
+                style: {
+                    color: '#FACC2E'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,
+            plotBands: [
+            { // Light breeze
+                from: 0,
+                to: 1,
+                color: 'rgba(30, 30, 30, 0.2)',
+                label: {
+                    text: 'Nord',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, 
+            { // Gentle breeze
+                from: 4,
+                to: 5,
+                color: 'rgba(30, 30, 30, 0.2)',
+                label: {
+                    text: 'Est',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            },
+            { // Light breeze
+                from: 8,
+                to: 9,
+                color: 'rgba(30, 30, 30, 0.2)',
+                label: {
+                    text: 'Sud',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            },
+            { // Gentle breeze
+                from: 12,
+                to: 13,
+                color: 'rgba(30, 30, 30, 0.2)',
+                label: {
+                    text: 'Ouest',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            },
+            { // Gentle breeze
+                from: 15,
+                to: 16,
+                color: 'rgba(30, 30, 30, 0.2)',
+                label: {
+                    text: 'Nord',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }],      
+                 
+        }
+        ],
+        tooltip: {
+            shared: true
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 2,
+                states: {
+                    hover: {
+                        lineWidth: 2
+                    }
+                },
+                marker: {
+                    enabled: false
+                },
+                pointInterval: (document.getElementById('Freq_Acqui_Jour').value*86400000)+(document.getElementById('Freq_Acqui_Heure').value*3600000)+(document.getElementById('Freq_Acqui_Min').value*60000), 
+                // calcule l'intervalle entre les données grâce aux inputs secrets
+
+                pointStart: Date.UTC(document.getElementById('In_Date_Year').value, document.getElementById('In_Date_Month').value-1, document.getElementById('In_Date_Day').value, document.getElementById('In_Date_Hour').value, document.getElementById('In_Date_Min').value) 
+                // Calcule la date de départ grâce aux inputs secrets
+            }
+        },
+
+
+        
+
+        series: 
+        [
+            {
+                name: 'Vitesse du Vent',
+                color: '#2E2EFE',
+                yAxis: 0,
+
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Vitesse_Vent'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                
+                tooltip: {
+                valueSuffix: ' km/h'
+
+                }
+            }
+            ,
+            {
+                name: 'Sens du Vent',
+                color: '#FACC2E',
+                yAxis: 1,
+                data: 
+                [
+                    <?php
+                        $reponse->execute();
+                        while ($donnees = $reponse->fetch())
+                        {
+                            if ($donnees['Sens_Vent'] == "Nord")
+                            {
+                                $Result=0;
+                            }   
+                            if ($donnees['Sens_Vent'] == "Nord Nord Est") 
+                            {
+                                $Result=1;
+                            }
+                            if ($donnees['Sens_Vent'] == "Nord Est") 
+                            {
+                                $Result=2;
+                            }
+                            if ($donnees['Sens_Vent'] == "Est Nord Est") 
+                            {
+                                $Result=3;
+                            }
+                            if ($donnees['Sens_Vent'] == "Est") 
+                            {
+                                $Result=4;
+                            }
+                            if ($donnees['Sens_Vent'] == "Est Sud Est") 
+                            {
+                                $Result=5;
+                            }
+                            if ($donnees['Sens_Vent'] == "Sud Est") 
+                            {
+                                $Result=6;
+                            }
+                            if ($donnees['Sens_Vent'] == "Sud Sud Est") 
+                            {
+                                $Result=7;
+                            }
+                            if ($donnees['Sens_Vent'] == "Sud") 
+                            {
+                                $Result=8;
+                            }
+                            if ($donnees['Sens_Vent'] == "Sud Sud Ouest") 
+                            {
+                                $Result=9;
+                            }
+                            if ($donnees['Sens_Vent'] == "Sud Ouest") 
+                            {
+                                $Result=10;
+                            }
+                            if ($donnees['Sens_Vent'] == "Ouest Sud Ouest") 
+                            {
+                                $Result=11;
+                            }
+                            if ($donnees['Sens_Vent'] == "Ouest") 
+                            {
+                                $Result=12;
+                            }
+                            if ($donnees['Sens_Vent'] == "Ouest Nord Ouest") 
+                            {
+                                $Result=13;
+                            }
+                            if ($donnees['Sens_Vent'] == "Nord Ouest") 
+                            {
+                                $Result=14;
+                            }
+                            if ($donnees['Sens_Vent'] == "Nord Nord Ouest") 
+                            {
+                                $Result=15;
+                            }
+
+                            echo $Result;
+                            echo ',';
+                        }
+                    ?>
+                ]
+            }
+        ],
+        navigation: {
+            menuItemStyle: {
+                fontSize: '10px'
+            }
+        }
+    });
+
+    $('#Water_Chart').highcharts({  
+        chart: {
+            type: 'spline'
+           
+        },
+        title: {
+            text: "Mesures du " + document.getElementById('In_Date_Day').value + "/" + (document.getElementById('In_Date_Month').value) + "/" +document.getElementById('In_Date_Year').value + " jusqu'au " + document.getElementById('In_Date_Day_f').value + "/" +(document.getElementById('In_Date_Month_f').value) + "/" + document.getElementById('In_Date_Year_f').value
+        },
+        subtitle: {
+            text: ""
+
+        },
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        yAxis: [{
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#FF0040'
+                }
+            },
+            title: {
+                text: "Taux d'Humidité (%)",
+                style: {
+                    color: '#FF0040'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,
+        },
+        {
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#424242'
+                }
+            },
+            title: {
+                text: "Pluviométrie (mm/m²)",
+                style: {
+                    color: '#424242'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,
+        }
+        ],
+
+        tooltip: {
+            shared: true
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 2,
+                states: {
+                    hover: {
+                        lineWidth: 2
+                    }
+                },
+                marker: {
+                    enabled: false
+                },
+                pointInterval: (document.getElementById('Freq_Acqui_Jour').value*86400000)+(document.getElementById('Freq_Acqui_Heure').value*3600000)+(document.getElementById('Freq_Acqui_Min').value*60000), //calcule l'intervalle entre les données en fonction des informations données par le <form>
+
+                pointStart: Date.UTC(document.getElementById('In_Date_Year').value, document.getElementById('In_Date_Month').value-1, document.getElementById('In_Date_Day').value, document.getElementById('In_Date_Hour').value, document.getElementById('In_Date_Min').value)//Calcule le Timestamp lié aux infos fournies par le <form>
+            }
+        },
+
+        
+
+        series: 
+        [
+            {
+                name: "Taux d'humidité Intérieure",
+                color: '#FF0040',
+                yAxis: 0,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tx_Humid_In'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' %'
+                }
+            },
+            {
+                name: "Taux d'humidité Extérieure",
+                color: '#B40431',
+                yAxis: 0,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tx_Humid_Out'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' %'
+                }
+            },
+            {
+                name: 'Pluviométrie',
+                color: '#424242',
+                yAxis: 1,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Pluvio'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' mm/m²'
+                }
+            }
+            ],
+
+        navigation: {
+            menuItemStyle: {
+                fontSize: '10px'
+            }
+        }
+    });
+
+$('#Pression_Chart').highcharts({
+        chart: {
+            type: 'spline'
+           
+        },
+        title: {
+            text: "Mesures du " + document.getElementById('In_Date_Day').value + "/" + (document.getElementById('In_Date_Month').value) + "/" +document.getElementById('In_Date_Year').value + " jusqu'au " + document.getElementById('In_Date_Day_f').value + "/" +(document.getElementById('In_Date_Month_f').value) + "/" + document.getElementById('In_Date_Year_f').value
+        },
+        subtitle: {
+            text: ""
+
+        },
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        yAxis: [
+        
+        {
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#B18904'
+                }
+            },
+            title: {
+                text: "Pression Relative (hPa)",
+                style: {
+                    color: '#B18904'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,  
+        }
+        ],
+
+        tooltip: {
+            shared: true
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 2,
+                states: {
+                    hover: {
+                        lineWidth: 2
+                    }
+                },
+                marker: {
+                    enabled: false
+                },
+                pointInterval: (document.getElementById('Freq_Acqui_Jour').value*86400000)+(document.getElementById('Freq_Acqui_Heure').value*3600000)+(document.getElementById('Freq_Acqui_Min').value*60000), //calcule l'intervalle entre les données en fonction des informations données par le <form>
+
+                pointStart: Date.UTC(document.getElementById('In_Date_Year').value, document.getElementById('In_Date_Month').value-1, document.getElementById('In_Date_Day').value, document.getElementById('In_Date_Hour').value, document.getElementById('In_Date_Min').value) //Calcule le Timestamp lié aux infos fournies par le <form>
+            }
+        },
+
+        
+
+        series: 
+        [
+            
+            {
+                name: "Pression Relative",
+                color: '#B18904',
+                yAxis: 0,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Press_Atm_hPa'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' hPa'
+                }
+            }
+            ],
+
+        navigation: {
+            menuItemStyle: {
+                fontSize: '10px'
+            }
+        }
+    });
+$('#Tempe_Chart').highcharts({
+        chart: {
+            type: 'spline'
+           
+        },
+        title: {
+            text: "Mesures du " + document.getElementById('In_Date_Day').value + "/" + (document.getElementById('In_Date_Month').value) + "/" +document.getElementById('In_Date_Year').value + " jusqu'au " + document.getElementById('In_Date_Day_f').value + "/" +(document.getElementById('In_Date_Month_f').value) + "/" + document.getElementById('In_Date_Year_f').value
+        },
+        subtitle: {
+            text: ""
+
+        },
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        yAxis: [
+        {
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#2E2EFE'
+                }
+            },
+            title: {
+                text: "Température (°C)",
+                style: {
+                    color: '#2E2EFE'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,    
+        },
+        {
+            labels: {
+                format: '{value}',
+                style: {
+                    color: '#8A0808'
+                }
+            },
+            title: {
+                text: "Température (°F)",
+                style: {
+                    color: '#8A0808'
+                }
+            },
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,  
+        }
+        ],
+
+        tooltip: {
+            shared: true
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 2,
+                states: {
+                    hover: {
+                        lineWidth: 2
+                    }
+                },
+                marker: {
+                    enabled: false
+                },
+                pointInterval: (document.getElementById('Freq_Acqui_Jour').value*86400000)+(document.getElementById('Freq_Acqui_Heure').value*3600000)+(document.getElementById('Freq_Acqui_Min').value*60000), //calcule l'intervalle entre les données en fonction des informations données par le <form>
+
+                pointStart: Date.UTC(document.getElementById('In_Date_Year').value, document.getElementById('In_Date_Month').value-1, document.getElementById('In_Date_Day').value, document.getElementById('In_Date_Hour').value, document.getElementById('In_Date_Min').value)//Calcule le Timestamp lié aux infos fournies par le <form>
+            }
+        },
+
+        
+
+        series: 
+        [
+            {
+                name: "Température Intérieure en °C",
+                color: '#2E2EFE',
+                yAxis: 0,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tempe_In_C'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' °C'
+                }
+            },
+            {
+                name: "Température Intérieure en °F",
+                color: '#8A0808',
+                yAxis: 1,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tempe_In_F'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' °F'
+                }
+            },
+            {
+                name: "Température Extérieure en °C",
+                color: '#81DAF5',
+                yAxis: 0,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tempe_Out_C'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' °C'
+                }
+            },
+            {
+                name: "Température Extérieure en °F",
+                color: '#DF0101',
+                yAxis: 1,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tempe_Out_F'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' °F'
+                }
+            },
+            {
+                name: "Température Ressentie",
+                color: '#A9A9F5',
+                yAxis: 0,
+                data: 
+                [
+                    <?php
+                        $reponse2->execute();
+                        while ($donnees2 = $reponse2->fetch())
+                        {
+                            echo $donnees2['Tempe_Ressentie'];
+                             echo ',';
+                        }
+                    ?>
+                ],
+                tooltip: {
+                valueSuffix: ' °C'
+                }
+            }
+            ],
+
+        navigation: {
+            menuItemStyle: {
+                fontSize: '10px'
+            }
+        }
+    });
+});
+        </script>
+    </head>
+    <body>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+
+
+    </body>
+</html>

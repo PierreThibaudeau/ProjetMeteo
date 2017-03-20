@@ -1,0 +1,24 @@
+<?php
+            try
+            {
+              $bdd_Read = new PDO('mysql:host=localhost;dbname=meteo2;charset=utf8', 'MeteoLecture', 'StationMeteo'); // Connection au client "localhost", en tant que l'utilisateur "MeteoLecture", à la BdD "meteo2" avec le mot de passe "StationMeteo" 
+            }
+            catch(Exception $e)
+            {
+              die('Erreur : ' . $e->getMessage()); // renvoi un message d'erreur si la connexion échoue
+            }
+            
+            try
+            {
+              $bdd_Write = new PDO('mysql:host=localhost;dbname=meteo2;charset=utf8', 'MeteoEcriture', 'StationMeteo'); // Connection au client "localhost", en tant que l'utilisateur "MeteoEcriture", à la BdD "meteo2" avec le mot de passe "StationMeteo" 
+            }
+            catch(Exception $e)
+            {
+              die('Erreur : ' . $e->getMessage()); // renvoi un message d'erreur si la connexion échoue
+            }
+   
+
+
+
+
+    ?>

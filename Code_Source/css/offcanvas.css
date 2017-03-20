@@ -1,0 +1,100 @@
+/*
+ * Style tweaks
+ * --------------------------------------------------
+ */
+html,
+body {
+      height: 100%;
+overflow-x: hidden;
+   background:url('../images/Image_Fond.png') no-repeat ;
+  -webkit-background-size: cover;
+  -moz-background-size:cover;
+  -o-background-size:cover;
+  background-size: cover;
+}
+body {
+  padding-top: 70px;
+  padding-bottom: 0px;
+   
+ -webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+          box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+
+.table
+{
+    border-collapse: collapse; /* Les bordures du tableau seront collées (plus joli) */
+}
+
+.table-responsive th, tr, td
+{
+  padding-right: 40px;
+  padding-left: 40px;
+  text-align: center;
+  vertical-align: center;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+}
+
+
+#graph li
+{
+   position:absolute; 
+   list-style:none;
+   background:black;
+   width:40px;
+   text-align:center;
+   border:1px solid black;
+   visibility: hidden;
+   background-image:url(bar-shaded.png);
+   background-repeat:repeat-y;
+}
+
+
+
+
+/*
+ * Off Canvas
+ * --------------------------------------------------
+ */
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 0;
+  }
+
+  .row-offcanvas-left {
+    left: 0;
+  }
+
+  .row-offcanvas-right
+  .sidebar-offcanvas {
+    right: -50%; /* 6 columns */
+  }
+
+  .row-offcanvas-left
+  .sidebar-offcanvas {
+    left: -90%; /* 6 columns */
+  }
+
+  .row-offcanvas-right.active {
+    right: 70%; /* 6 columns */
+  }
+
+  .row-offcanvas-left.active {
+    left: 90%; /* 6 columns */
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+  }
+}

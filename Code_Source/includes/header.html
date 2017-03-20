@@ -1,0 +1,75 @@
+
+ <link href="../css/navbar-fixed-top.css" rel="stylesheet">
+ 
+<script type="text/javascript">   //fonction pour afficher l'heure 
+function horloge(){
+ var div = document.getElementById("horloge");
+ var Time = new Date();
+ 
+ window.setTimeout("horloge()",1000);
+
+  var h=Time.getHours();
+  if (h<10) {h = "0" + h}
+  var m=Time.getMinutes();
+  if (m<10) {m = "0" + m}
+  var s=Time.getSeconds();
+  if (s<10) {s = "0" + s}
+
+
+  div.firstChild.nodeValue = h+":"+m+":"+s;
+}
+
+horloge();
+
+
+
+</script>
+  
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar1" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="./Presentation.php">Présentation</a>
+        </div>
+        <div id="navbar1" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="./Infos_Jour.php">Informations du jour</a></li>   
+            <li><a href="./Donnees_Instantanees.php">Données Instantanées</a></li>
+            <li><a href="./Donnees_Archivees.php">Données Archivées</a></li>
+            <li><a href="./RemplirBase.php">Remplir la Bdd (valeurs test)</a></li>
+            <li><a href="./EffacerBase.php">Effacer la Bdd</a></li>
+          </ul>
+
+       
+
+            <ul class="nav navbar-nav navbar-right">
+            <li><a 
+                          <tr>
+                            <td><div align="center">
+                            <div id="horloge"> </div>
+                                <script type="text/javascript">
+                                horloge();
+                                </script>
+                                </div>
+                            </td>
+                          </tr>
+                         
+                      </table>            
+    </a></li>
+
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+
+ 
+

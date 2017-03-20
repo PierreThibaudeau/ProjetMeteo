@@ -1,0 +1,76 @@
+/*!
+ * Start Bootstrap - 4 Col Portfolio HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+
+
+
+
+.portfo_text{
+  position: absolute;
+
+
+
+}
+
+
+
+html,
+body {
+      height: 100%;
+overflow-x: hidden;
+   background:url('../images/Image_Fond.png') no-repeat ;
+  -webkit-background-size: cover;
+  -moz-background-size:cover;
+  -o-background-size:cover;
+  background-size: cover;
+}
+body {
+  padding-top: 70px;
+  padding-bottom: 0px;
+   
+ -webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+          box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+
+@media(min-width: 0px )
+{
+  div.col-md-3,.portfolio-item {
+    height: 200px;
+    width: 90%;
+    border-radius: 20px;
+    background-image: url('../images/Fond_Portfolio2.jpg');
+  }
+}
+@media(min-width: 1000px )
+{
+  div.col-md-3,.portfolio-item {
+    height: 250px;
+    width: 30%;
+    border-radius: 20px;
+    background-image: url('../images/Fond_Portfolio2.jpg');
+  }
+}
+
+@media(min-width: 1300px )
+{
+  div.col-md-3,.portfolio-item {
+    height: 250px;
+    width: 30%;
+    border-radius: 20px;
+    background-image: url('../images/Fond_Portfolio2.jpg');
+  }
+}
+
+div.col-md-3,.portfolio-item {
+
+    opacity: 0.9;
+    z-index: 1;
+    text-align: center;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+  }
